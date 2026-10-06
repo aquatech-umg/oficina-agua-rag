@@ -1,3 +1,10 @@
 spring:
   application:
     name: rag-service
+  datasource:
+    url: jdbc:postgresql://localhost:5433/rag
+    username: rag
+    password: rag_local
+
+server:
+  port: 8081
