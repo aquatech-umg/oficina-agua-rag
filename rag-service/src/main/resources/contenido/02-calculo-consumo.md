@@ -14,7 +14,7 @@ Si el consumo supera la capacidad contratada, el monto es la tarifa fija mensual
 
 ## Cuándo se genera el recibo
 
-El recibo se genera automáticamente en el momento en que se registra la lectura del mes, usando la tarifa vigente en esa fecha. Cada recibo tiene un número único con el formato REC, año y correlativo, y queda en estado pendiente hasta que se registra su pago.
+El recibo se genera automáticamente en el momento en que se registra la lectura del mes, usando la tarifa vigente en esa fecha. Cada recibo tiene un número único con el formato REC-AAAA-CCCC-NNNNNN: el año de emisión, los últimos cuatro dígitos del número de registro del contador y un correlativo de seis dígitos, por ejemplo REC-2026-4821-000001. El recibo queda en estado pendiente hasta que se registra su pago.
 
 ## Qué hacer si el consumo parece demasiado alto
 
