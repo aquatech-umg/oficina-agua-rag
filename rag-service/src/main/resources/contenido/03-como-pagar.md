@@ -2,15 +2,11 @@
 
 ## Dónde se paga
 
-El recibo se paga en la ventanilla de la Oficina Municipal de Agua, ubicada en el edificio municipal. No es necesario llevar el recibo impreso: basta con el número de registro del contador o el nombre del titular del servicio.
-
-## Horario de atención
-
-La ventanilla atiende de lunes a viernes, de 8:00 a 16:00 horas, sin cerrar al mediodía. No hay atención los sábados, domingos ni días de asueto.
+El recibo se paga en la Oficina Municipal de Agua. Para ubicar su recibo indique el número de registro del contador o el nombre del titular del servicio.
 
 ## Formas de pago aceptadas
 
-Se aceptan pagos en efectivo, con tarjeta de débito o crédito y por depósito o transferencia bancaria. Si paga por depósito o transferencia, presente la boleta o el número de referencia en ventanilla para que el pago se registre en su recibo.
+El pago se realiza en efectivo.
 
 ## Fecha límite de pago
 
@@ -20,10 +16,10 @@ La fecha límite de pago es el día 10. Si el recibo se emitió entre el día 1 
 
 Si el recibo sigue pendiente después de la fecha límite, se le agrega un recargo por mora. La mora está definida en la tarifa y puede ser un monto fijo, un porcentaje del monto del recibo o ambos sumados. Se aplica una sola vez por recibo vencido y no aumenta cada día.
 
-## Qué recibo al pagar
+## Qué pasa al pagar
 
-Al pagar, el recibo cambia a estado pagado y se entrega un comprobante. Guarde su comprobante: es su respaldo ante cualquier reclamo.
+Al registrarse el pago, el recibo cambia de estado pendiente a pagado. Un recibo pagado ya no genera mora.
 
 ## Cómo consultar mi saldo pendiente
 
-Puede consultar cuánto debe en la página de consulta pública ingresando el código de su contador, o directamente en la ventanilla de la Oficina Municipal de Agua.
+Puede consultar cuánto debe en la página de consulta pública ingresando el código de su contador, o directamente en la Oficina Municipal de Agua.

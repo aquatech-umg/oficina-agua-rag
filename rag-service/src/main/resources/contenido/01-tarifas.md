@@ -2,7 +2,7 @@
 
 ## Qué es una tarifa
 
-La tarifa es el conjunto de precios que la Oficina Municipal de Agua aplica al consumo mensual de cada contador. Cada contador tiene asignado un tipo de servicio, y ese tipo determina qué tarifa se le cobra. La tarifa define cuatro cosas: la capacidad mensual incluida, el precio por metro cúbico dentro de esa capacidad, el precio por metro cúbico de exceso y el recargo por mora.
+La tarifa es lo que la Oficina Municipal de Agua cobra cada mes por el servicio de un contador. Cada contador tiene asignado un tipo de servicio, y ese tipo determina su tarifa. La tarifa define cuatro cosas: la capacidad mensual contratada, el precio fijo mensual que cubre esa capacidad, el precio por cada metro cúbico de exceso y el recargo por mora.
 
 ## Tipos de servicio y capacidad mensual
 
@@ -14,9 +14,13 @@ El servicio se contrata por pajas de agua. Cada paja equivale a una capacidad de
 
 También pueden contratarse otras cantidades de pajas; la capacidad siempre es la cantidad de pajas multiplicada por 60 metros cúbicos.
 
-## Precio normal y precio por exceso
+## Tarifa fija mensual
 
-Cada tarifa tiene dos precios por metro cúbico. El precio normal se cobra por el agua consumida dentro de la capacidad contratada. El precio por exceso se cobra por cada metro cúbico que sobrepasa esa capacidad, y es más alto que el precio normal para incentivar el uso responsable del agua.
+Cada tipo de servicio tiene un precio fijo mensual. Ese precio cubre toda la capacidad contratada y se cobra completo cada mes, sin importar cuánta agua se haya consumido dentro de esa capacidad. Consumir menos de la capacidad no reduce el monto del recibo.
+
+## Precio por exceso
+
+Si el consumo del mes supera la capacidad contratada, cada metro cúbico adicional se cobra aparte, al precio por exceso definido en la tarifa. Ese cobro se suma a la tarifa fija mensual.
 
 ## Vigencia de las tarifas
 
@@ -24,4 +28,4 @@ Las tarifas tienen una fecha de inicio de vigencia. Cuando la municipalidad apru
 
 ## Cómo saber cuál es mi tarifa
 
-El tipo de servicio y la tarifa aplicada aparecen impresos en cada recibo. También puede consultarlos en la Oficina Municipal de Agua presentando el número de registro de su contador.
+El tipo de servicio y la tarifa aplicada aparecen en cada recibo. También puede consultarlos en la Oficina Municipal de Agua indicando el número de registro de su contador.
