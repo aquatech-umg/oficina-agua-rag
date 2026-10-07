@@ -8,25 +8,28 @@ El chatbot RAG necesita dos modelos: uno de embeddings, que convierte texto en v
 
 | Opción | A favor | En contra |
 |---|---|---|
-| Ollama (local) | Gratis, sin claves, todo corre en la máquina | Requiere tarjeta de video; la máquina debe estar presente en la demo |
+| Ollama (local) | Gratis, sin claves, todo corre en la máquina | Sin tarjeta de video responde lento; la máquina debe estar presente en la demo |
 | OpenAI | Rápido y simple de conectar | Requiere tarjeta de pago y saldo |
 | AWS Bedrock | Se puede pagar con créditos de AWS | Configurar permisos y acceso a modelos toma más tiempo |
 
 ## Decisión
 
-Ollama local (versión 0.40.0), con estos modelos:
+Ollama local, con estos modelos:
 
 | Función | Modelo | Motivo |
 |---|---|---|
 | LLM | `qwen3:8b` | Cabe en 8 GB de memoria de video y maneja bien el español |
 | Embeddings | `bge-m3` | Multilingüe; el contenido está en español. Vectores de 1024 dimensiones |
 
-Equipo de desarrollo: laptop con NVIDIA GeForce RTX 4070 (8 GB de video).
+Ollama puede ejecutarse en CPU, pero para la demo se utilizará GPU NVIDIA para obtener mejores tiempos de respuesta.
+
+Versión probada localmente: Ollama 0.40.0, en una laptop con NVIDIA GeForce RTX 4070 (8 GB de video).
 
 ## Consecuencias
 
-- La columna de vectores en pgvector se define como `vector(1024)`.
-- Cambiar el LLM es un cambio de configuración. Cambiar el modelo de embeddings obliga a recrear la columna y regenerar todos los vectores.
+- `bge-m3` produce vectores de 1024 dimensiones, por lo que la columna inicial en pgvector se define como `vector(1024)`.
+- Cambiar el LLM es un cambio de configuración.
+- Cambiar el modelo de embeddings obliga a regenerar todos los vectores. Si el nuevo modelo utiliza una dimensión diferente, también debe ajustarse la columna `vector(...)` y el índice correspondiente en pgvector.
 - Ollama se instala directo en Windows, fuera de Docker Compose, para usar la tarjeta de video. Es la única pieza externa, igual que en la arquitectura del curso.
 - El razonamiento del modelo ("thinking") se desactiva desde el servicio: en un RAG el contexto ya trae la información y apagarlo reduce el tiempo de respuesta.
 
@@ -57,6 +60,6 @@ Ejecutada el 7 de octubre de 2026.
   - `qwen3:8b`: 5.6 GB, 100% GPU.
   - Los dos modelos caben juntos en la memoria de video.
 
-## Por confirmar con el docente
+## Pendiente
 
-- Si acepta Ollama local para la demo o exige un proveedor en la nube.
+- Confirmar si existe alguna instrucción posterior del docente que exija un proveedor en la nube para la demo final.
