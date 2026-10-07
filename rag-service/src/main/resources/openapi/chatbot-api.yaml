@@ -1,0 +1,96 @@
+openapi: 3.0.3
+info:
+  title: API del chatbot RAG - Oficina de Agua
+  description: Contrato del servicio que responde preguntas del dominio usando RAG.
+  version: 0.1.0
+servers:
+  - url: http://localhost:8081
+    description: Desarrollo local
+tags:
+  - name: chat
+    description: Conversacion con el chatbot
+paths:
+  /api/chat:
+    post:
+      tags:
+        - chat
+      operationId: enviarMensaje
+      summary: Envia una pregunta y devuelve la respuesta del chatbot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+      responses:
+        '200':
+          description: Respuesta generada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+        '400':
+          description: Peticion invalida (mensaje vacio o demasiado largo)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: El modelo de lenguaje no esta disponible
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    ChatRequest:
+      type: object
+      required:
+        - mensaje
+      properties:
+        mensaje:
+          type: string
+          minLength: 1
+          maxLength: 1000
+          example: Cual es la tarifa vigente?
+        conversacionId:
+          type: string
+          format: uuid
+          description: Identificador de la conversacion. Se omite en el primer mensaje.
+    ChatResponse:
+      type: object
+      required:
+        - respuesta
+        - conversacionId
+      properties:
+        respuesta:
+          type: string
+          example: La tarifa vigente es de Q25.00 por los primeros 15 metros cubicos.
+        conversacionId:
+          type: string
+          format: uuid
+        fuentes:
+          type: array
+          description: Fragmentos del contenido de referencia usados para responder
+          items:
+            $ref: '#/components/schemas/Fuente'
+    Fuente:
+      type: object
+      properties:
+        titulo:
+          type: string
+          example: Tarifas vigentes
+        fragmento:
+          type: string
+    ErrorResponse:
+      type: object
+      required:
+        - codigo
+        - mensaje
+      properties:
+        codigo:
+          type: string
+          example: MENSAJE_INVALIDO
+        mensaje:
+          type: string
+          example: El mensaje no puede estar vacio.
