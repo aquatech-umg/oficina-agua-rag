@@ -14,13 +14,9 @@ El servicio se contrata por pajas de agua. Cada paja equivale a una capacidad de
 
 También pueden contratarse otras cantidades de pajas; la capacidad siempre es la cantidad de pajas multiplicada por 60 metros cúbicos.
 
-## Tarifa fija mensual
+## Tarifa fija mensual y precio por exceso
 
-Cada tipo de servicio tiene un precio fijo mensual. Ese precio cubre toda la capacidad contratada y se cobra completo cada mes, sin importar cuánta agua se haya consumido dentro de esa capacidad. Consumir menos de la capacidad no reduce el monto del recibo.
-
-## Precio por exceso
-
-Si el consumo del mes supera la capacidad contratada, cada metro cúbico adicional se cobra aparte, al precio por exceso definido en la tarifa. Ese cobro se suma a la tarifa fija mensual.
+Cada tipo de servicio tiene un precio fijo mensual. Ese precio cubre toda la capacidad contratada y se cobra completo cada mes, sin importar cuánta agua se haya consumido dentro de esa capacidad. Consumir menos de la capacidad no reduce el monto del recibo. Si el consumo del mes supera la capacidad contratada, cada metro cúbico adicional se cobra aparte, al precio por exceso definido en la tarifa, y ese cobro se suma a la tarifa fija mensual.
 
 ## Vigencia de las tarifas
 
@@ -28,4 +24,4 @@ Las tarifas tienen una fecha de inicio de vigencia. Cuando la municipalidad apru
 
 ## Cómo saber cuál es mi tarifa
 
-El tipo de servicio y la tarifa aplicada aparecen en cada recibo. También puede consultarlos en la Oficina Municipal de Agua indicando el número de registro de su contador.
+La tarifa aplicada depende del tipo de servicio contratado para su contador. Cada recibo indica el consumo del mes, la capacidad contratada, la tarifa fija cobrada y, si lo hubo, el exceso. También puede consultar su tipo de servicio en la Oficina Municipal de Agua indicando el número de registro de su contador.
