@@ -14,7 +14,7 @@ El chatbot RAG necesita dos modelos: uno de embeddings, que convierte texto en v
 
 ## Decisión
 
-Ollama local, con estos modelos:
+Ollama local (versión 0.40.0), con estos modelos:
 
 | Función | Modelo | Motivo |
 |---|---|---|
@@ -27,17 +27,35 @@ Equipo de desarrollo: laptop con NVIDIA GeForce RTX 4070 (8 GB de video).
 
 - La columna de vectores en pgvector se define como `vector(1024)`.
 - Cambiar el LLM es un cambio de configuración. Cambiar el modelo de embeddings obliga a recrear la columna y regenerar todos los vectores.
-- El proveedor y los nombres de los modelos se leen de configuración, no van fijos en el código. Si el docente pide un proveedor en la nube, se cambia a Bedrock sin tocar la lógica.
 - Ollama se instala directo en Windows, fuera de Docker Compose, para usar la tarjeta de video. Es la única pieza externa, igual que en la arquitectura del curso.
+- El razonamiento del modelo ("thinking") se desactiva desde el servicio: en un RAG el contexto ya trae la información y apagarlo reduce el tiempo de respuesta.
+
+## Configuración
+
+Nada de esto va fijo en el código. El servicio lo lee de variables de entorno, con valores por defecto para desarrollo local:
+
+| Variable | Valor por defecto | Uso |
+|---|---|---|
+| `LLM_PROVIDER` | `ollama` | Proveedor del modelo |
+| `LLM_BASE_URL` | `http://localhost:11434` | Dirección del proveedor |
+| `LLM_MODEL` | `qwen3:8b` | Modelo que redacta la respuesta |
+| `EMBEDDING_MODEL` | `bge-m3` | Modelo de embeddings |
+| `LLM_API_KEY` | (vacío) | Solo si se cambia a un proveedor en la nube |
+
+Ollama no usa clave. Si se cambia a un proveedor en la nube, la clave se pasa por variable de entorno: nunca se sube a Git ni llega al navegador.
 
 ## Prueba mínima
 
-Pendiente de ejecutar.
+Ejecutada el 7 de octubre de 2026.
 
 - LLM: `ollama run qwen3:8b "Explica en dos lineas que es una tarifa de agua potable."`
-    - Resultado:
-- Embeddings: petición a `http://localhost:11434/api/embed` con el modelo `bge-m3`.
-    - Dimensiones obtenidas:
+  - Resultado: respondió en español, en dos líneas: "Una tarifa de agua potable es el precio que se cobra por el consumo de agua, establecido por las autoridades o empresas encargadas de su distribución. Esta tarifa cubre los costos de tratamiento, distribución, mantenimiento de infraestructuras y, en algunos casos, impuestos o tarifas adicionales."
+- Embeddings: petición a `http://localhost:11434/api/embed` con el modelo `bge-m3` y el texto "tarifa vigente del agua".
+  - Dimensiones obtenidas: 1024.
+- Uso de recursos (`ollama ps`):
+  - `bge-m3`: 664 MB, 100% GPU.
+  - `qwen3:8b`: 5.6 GB, 100% GPU.
+  - Los dos modelos caben juntos en la memoria de video.
 
 ## Por confirmar con el docente
 
