@@ -30,7 +30,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ChatResponse'
         '400':
-          description: Peticion invalida (mensaje vacio o demasiado largo)
+          description: Peticion invalida (mensaje vacio o demasiado largo, JSON invalido o conversacionId que no es UUID)
           content:
             application/json:
               schema:
@@ -65,7 +65,7 @@ components:
       properties:
         respuesta:
           type: string
-          example: La tarifa vigente es de Q25.00 por los primeros 15 metros cubicos.
+          example: La tarifa es un monto fijo mensual que cubre la capacidad contratada. Solo se cobra aparte el consumo que exceda esa capacidad.
         conversacionId:
           type: string
           format: uuid
@@ -79,7 +79,7 @@ components:
       properties:
         titulo:
           type: string
-          example: Tarifas vigentes
+          example: Tarifa fija mensual y precio por exceso
         fragmento:
           type: string
     ErrorResponse:
@@ -90,6 +90,11 @@ components:
       properties:
         codigo:
           type: string
+          description: >
+            Codigos posibles: MENSAJE_INVALIDO (mensaje vacio o mayor a 1000 caracteres),
+            PETICION_INVALIDA (el cuerpo no es JSON valido),
+            CONVERSACION_INVALIDA (conversacionId no es un UUID valido),
+            MODELO_NO_DISPONIBLE (el modelo de lenguaje no responde, codigo 503).
           example: MENSAJE_INVALIDO
         mensaje:
           type: string
