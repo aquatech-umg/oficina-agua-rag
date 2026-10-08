@@ -1,0 +1,37 @@
+{
+  "conversacionId": {
+    "S": "7b2b8f5a-08a5-4c0e-9f63-2d7c92e72095"
+  },
+  "orden": {
+    "S": "2026-10-08T22:10:00.000Z#1e44c07f-3f14-454a-8f71-38ddcedb8c81"
+  },
+  "creadoEn": {
+    "S": "2026-10-08T22:10:00.000Z"
+  },
+  "intercambioId": {
+    "S": "1e44c07f-3f14-454a-8f71-38ddcedb8c81"
+  },
+  "pregunta": {
+    "S": "¿Cómo se calcula el consumo de agua?"
+  },
+  "respuesta": {
+    "S": "El consumo se determina a partir de la diferencia entre la lectura actual y la lectura anterior del contador."
+  },
+  "fuentes": {
+    "L": [
+      {
+        "M": {
+          "titulo": {
+            "S": "Cálculo de consumo"
+          },
+          "fragmento": {
+            "S": "El consumo corresponde a la diferencia entre las lecturas registradas del contador."
+          }
+        }
+      }
+    ]
+  },
+  "modelo": {
+    "S": "qwen3:8b"
+  }
+}
