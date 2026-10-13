@@ -13,8 +13,8 @@ import gt.edu.umg.aquatech.ragservice.llm.ModeloNoDisponibleException;
 @RestControllerAdvice
 public class ManejadorErrores {
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> mensajeInvalido(MethodArgumentNotValidException ex) {
+    @ExceptionHandler({ MethodArgumentNotValidException.class, MensajeInvalidoException.class })
+    public ResponseEntity<ErrorResponse> mensajeInvalido(Exception ex) {
         return error(HttpStatus.BAD_REQUEST, "MENSAJE_INVALIDO",
                 "El mensaje no puede estar vacio ni superar los 1000 caracteres.");
     }

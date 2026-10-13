@@ -31,3 +31,8 @@ rag:
   carga:
     # Carga los documentos de contenido/ en pgvector al iniciar. Ponelo en false si no tenés Ollama.
     al-iniciar: ${RAG_CARGA_AL_INICIAR:true}
+  busqueda:
+    # Cuántos fragmentos se buscan, similitud mínima (0 a 1) y margen respecto al mejor fragmento
+    max-fragmentos: ${RAG_MAX_FRAGMENTOS:4}
+    similitud-minima: ${RAG_SIMILITUD_MINIMA:0.50}
+    margen-relativo: ${RAG_MARGEN_RELATIVO:0.10}
