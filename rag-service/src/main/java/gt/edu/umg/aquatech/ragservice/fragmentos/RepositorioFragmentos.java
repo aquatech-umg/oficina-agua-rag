@@ -51,6 +51,28 @@ public class RepositorioFragmentos {
                 .update();
     }
 
+    /**
+     * Los fragmentos más parecidos al vector dado, del más al menos parecido.
+     * {@code <=>} es la distancia de coseno de pgvector; similitud = 1 - distancia.
+     */
+    public List<FragmentoEncontrado> buscarSimilares(float[] vector, int limite) {
+        return jdbc.sql("""
+                SELECT archivo, seccion, contenido,
+                       1 - (embedding <=> CAST(:vector AS vector)) AS similitud
+                FROM fragmentos
+                ORDER BY embedding <=> CAST(:vector AS vector)
+                LIMIT :limite
+                """)
+                .param("vector", aTextoVector(vector))
+                .param("limite", limite)
+                .query((rs, fila) -> new FragmentoEncontrado(
+                        rs.getString("archivo"),
+                        rs.getString("seccion"),
+                        rs.getString("contenido"),
+                        rs.getDouble("similitud")))
+                .list();
+    }
+
     /** pgvector recibe los vectores como texto: [0.12,-0.03,...] */
     static String aTextoVector(float[] vector) {
         StringBuilder texto = new StringBuilder(vector.length * 10).append('[');
