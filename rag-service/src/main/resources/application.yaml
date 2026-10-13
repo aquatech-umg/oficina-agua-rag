@@ -5,6 +5,20 @@ spring:
     url: jdbc:postgresql://localhost:5433/rag
     username: rag
     password: rag_local
+  cloud:
+    openfeign:
+      client:
+        config:
+          ollama:
+            connect-timeout: 5000
+            # Menor que el timeout del BFF (60 s): así respondemos 503 antes de que el BFF se rinda
+            read-timeout: 50000
 
 server:
   port: 8081
+
+llm:
+  base-url: ${LLM_BASE_URL:http://localhost:11434}
+  model: ${LLM_MODEL:qwen3:8b}
+  embedding-model: ${EMBEDDING_MODEL:bge-m3}
+  embedding-dimensions: 1024
