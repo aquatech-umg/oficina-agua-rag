@@ -10,7 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /** Prueba contra Ollama real. Se activa con la variable de entorno OLLAMA_IT=true. */
-@SpringBootTest
+@SpringBootTest(properties = {
+        "spring.sql.init.mode=never",
+        "rag.carga.al-iniciar=false"
+})
 @EnabledIfEnvironmentVariable(named = "OLLAMA_IT", matches = "true")
 class ServicioLlmTests {
 

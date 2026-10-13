@@ -3,7 +3,11 @@ package gt.edu.umg.aquatech.ragservice;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+/** Verifica que el contexto arranque sin necesitar Postgres ni Ollama. */
+@SpringBootTest(properties = {
+        "spring.sql.init.mode=never",
+        "rag.carga.al-iniciar=false"
+})
 class RagServiceApplicationTests {
 
     @Test
