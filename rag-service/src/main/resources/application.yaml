@@ -5,6 +5,10 @@ spring:
     url: jdbc:postgresql://localhost:5433/rag
     username: rag
     password: rag_local
+  sql:
+    init:
+      # Ejecuta schema.sql al arrancar (crea la extension vector y la tabla fragmentos si no existen)
+      mode: always
   cloud:
     openfeign:
       client:
@@ -22,3 +26,8 @@ llm:
   model: ${LLM_MODEL:qwen3:8b}
   embedding-model: ${EMBEDDING_MODEL:bge-m3}
   embedding-dimensions: 1024
+
+rag:
+  carga:
+    # Carga los documentos de contenido/ en pgvector al iniciar. Ponelo en false si no tenés Ollama.
+    al-iniciar: ${RAG_CARGA_AL_INICIAR:true}
