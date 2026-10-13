@@ -17,6 +17,56 @@ interface ErrorResponse {
   mensaje: string;
 }
 
+const ORIGENES_PERMITIDOS = (process.env.WIDGET_ALLOWED_ORIGINS ?? "")
+  .split(",")
+  .map((origen) => origen.trim())
+  .filter(Boolean);
+
+function esOrigenPermitido(
+  origen: string | null,
+  urlSolicitud: string
+): boolean {
+  if (!origen) {
+    return true;
+  }
+
+  const origenBff = new URL(urlSolicitud).origin;
+
+  return (
+    origen === origenBff ||
+    ORIGENES_PERMITIDOS.includes(origen)
+  );
+}
+
+function encabezadosCors(
+  origen: string | null,
+  urlSolicitud: string
+): HeadersInit {
+  const headers: Record<string, string> = {
+    Vary: "Origin",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
+
+  if (origen && esOrigenPermitido(origen, urlSolicitud)) {
+    headers["Access-Control-Allow-Origin"] = origen;
+  }
+
+  return headers;
+}
+
+function respuestaJson<T>(
+  datos: T,
+  status: number,
+  origen: string | null,
+  urlSolicitud: string
+): NextResponse<T> {
+  return NextResponse.json(datos, {
+    status,
+    headers: encabezadosCors(origen, urlSolicitud),
+  });
+}
+
 function esUuid(valor: string): boolean {
   const uuidRegex =
     /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -24,7 +74,39 @@ function esUuid(valor: string): boolean {
   return uuidRegex.test(valor);
 }
 
+export async function OPTIONS(request: Request) {
+  const origen = request.headers.get("origin");
+
+  if (!esOrigenPermitido(origen, request.url)) {
+    const error: ErrorResponse = {
+      codigo: "ORIGEN_NO_PERMITIDO",
+      mensaje: "El origen de la solicitud no está permitido.",
+    };
+
+    return respuestaJson(error, 403, origen, request.url);
+  }
+
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      ...encabezadosCors(origen, request.url),
+      "Access-Control-Max-Age": "86400",
+    },
+  });
+}
+
 export async function POST(request: Request) {
+  const origen = request.headers.get("origin");
+
+  if (!esOrigenPermitido(origen, request.url)) {
+    const error: ErrorResponse = {
+      codigo: "ORIGEN_NO_PERMITIDO",
+      mensaje: "El origen de la solicitud no está permitido.",
+    };
+
+    return respuestaJson(error, 403, origen, request.url);
+  }
+
   let body: unknown;
 
   try {
@@ -35,7 +117,7 @@ export async function POST(request: Request) {
       mensaje: "El cuerpo de la petición debe ser JSON válido.",
     };
 
-    return NextResponse.json(error, { status: 400 });
+    return respuestaJson(error, 400, origen, request.url);
   }
 
   if (typeof body !== "object" || body === null || Array.isArray(body)) {
@@ -44,7 +126,7 @@ export async function POST(request: Request) {
       mensaje: "El cuerpo de la petición debe ser un objeto JSON válido.",
     };
 
-    return NextResponse.json(error, { status: 400 });
+    return respuestaJson(error, 400, origen, request.url);
   }
 
   const datos = body as Record<string, unknown>;
@@ -57,7 +139,7 @@ export async function POST(request: Request) {
       mensaje: "El mensaje no puede estar vacío.",
     };
 
-    return NextResponse.json(error, { status: 400 });
+    return respuestaJson(error, 400, origen, request.url);
   }
 
   if (mensaje.trim().length > 1000) {
@@ -66,7 +148,7 @@ export async function POST(request: Request) {
       mensaje: "El mensaje no puede superar los 1000 caracteres.",
     };
 
-    return NextResponse.json(error, { status: 400 });
+    return respuestaJson(error, 400, origen, request.url);
   }
 
   if (
@@ -78,7 +160,7 @@ export async function POST(request: Request) {
       mensaje: "El conversacionId debe tener un formato UUID válido.",
     };
 
-    return NextResponse.json(error, { status: 400 });
+    return respuestaJson(error, 400, origen, request.url);
   }
 
   const idConversacion =
@@ -97,5 +179,5 @@ export async function POST(request: Request) {
     ],
   };
 
-  return NextResponse.json(respuesta, { status: 200 });
+  return respuestaJson(respuesta, 200, origen, request.url);
 }
