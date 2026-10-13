@@ -3,6 +3,11 @@
 
   const scriptActual = document.currentScript;
 
+  function iniciarWidget() {
+    if (document.getElementById("aquatech-chat-widget")) {
+      return;
+    }
+
   const origenBff = scriptActual?.dataset.apiBase
     ? scriptActual.dataset.apiBase.replace(/\/$/, "")
     : scriptActual?.src
@@ -505,10 +510,25 @@
     }
   });
 
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && abierto) {
+      cambiarEstadoChat();
+    }
+  });
+
   agregarMensaje(
     "Hola. Soy el asistente virtual de la Oficina Municipal de Agua. ¿En qué puedo ayudarte?",
     "bot"
   );
 
   document.body.appendChild(host);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", iniciarWidget, {
+      once: true,
+    });
+  } else {
+    iniciarWidget();
+  }
 })();
