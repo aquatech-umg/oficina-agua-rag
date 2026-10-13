@@ -18,6 +18,7 @@ import gt.edu.umg.aquatech.ragservice.fragmentos.Fragmento;
 
 class DivisorFragmentosTests {
 
+    private static final int MIN = 40;
     private static final int MAX = 120;
 
     private final DivisorFragmentos divisor = new DivisorFragmentos();
@@ -36,7 +37,7 @@ class DivisorFragmentosTests {
             List<Fragmento> fragmentos = divisor.dividir("CONTENIDO", archivo, markdown);
             for (Fragmento f : fragmentos) {
                 int n = palabras(f);
-                assertTrue(n >= 40 && n <= MAX,
+                assertTrue(n >= MIN && n <= MAX,
                         f.archivo() + " / " + f.seccion() + " tiene " + n + " palabras");
             }
             total += fragmentos.size();
@@ -59,7 +60,7 @@ class DivisorFragmentosTests {
         List<Fragmento> fragmentos = divisor.dividir("PRUEBA", "doc.md", markdown);
         assertEquals(2, fragmentos.size());
         assertEquals("Larga", fragmentos.get(1).seccion());
-        fragmentos.forEach(f -> assertTrue(palabras(f) <= MAX));
+        fragmentos.forEach(f -> assertTrue(palabras(f) >= MIN && palabras(f) <= MAX));
     }
 
     @Test
@@ -68,7 +69,8 @@ class DivisorFragmentosTests {
         List<Fragmento> fragmentos = divisor.dividir("PRUEBA", "doc.md", "# Doc\n\n## Larga\n\n" + parrafo + "\n");
 
         assertTrue(fragmentos.size() >= 2);
-        fragmentos.forEach(f -> assertTrue(palabras(f) <= MAX, "Un fragmento tiene " + palabras(f) + " palabras"));
+        fragmentos.forEach(f -> assertTrue(palabras(f) >= MIN && palabras(f) <= MAX,
+                "Un fragmento tiene " + palabras(f) + " palabras"));
         fragmentos.forEach(f -> assertEquals("Larga", f.seccion()));
         assertEquals(240, fragmentos.stream().mapToInt(DivisorFragmentosTests::palabras).sum(),
                 "No se debe perder ninguna palabra al dividir");
@@ -98,5 +100,37 @@ class DivisorFragmentosTests {
         assertTrue(CargadorContenido.seVectoriza("horarios.md"), "Cualquier .md nuevo se carga, sin importar el nombre");
         assertFalse(CargadorContenido.seVectoriza("README.md"));
         assertFalse(CargadorContenido.seVectoriza("notas.txt"));
+    }
+
+    @Test
+    void seccionDe121PalabrasSinPuntosNoDejaUnFragmentoDeUnaPalabra() {
+        List<Fragmento> fragmentos = divisor.dividir("PRUEBA", "doc.md",
+                "# Doc\n\n## Limite\n\n" + "palabra ".repeat(121) + "\n");
+        assertEquals(List.of(61, 60), fragmentos.stream().map(DivisorFragmentosTests::palabras).toList());
+    }
+
+    @Test
+    void oracionCortaSeguidaDeUnaLargaSeRedistribuye() {
+        String texto = "Una oracion corta de exactamente diez palabras para probar esto. "
+                + "palabra ".repeat(114) + "fin.";
+        List<Fragmento> fragmentos = divisor.dividir("PRUEBA", "doc.md", "# Doc\n\n## Mixta\n\n" + texto + "\n");
+
+        fragmentos.forEach(f -> assertTrue(palabras(f) >= MIN && palabras(f) <= MAX,
+                "Un fragmento tiene " + palabras(f) + " palabras"));
+        assertEquals(125, fragmentos.stream().mapToInt(DivisorFragmentosTests::palabras).sum());
+    }
+
+    @Test
+    void ningunaLongitudDeSeccionProduceFragmentosFueraDe40a120() {
+        for (int n = MIN; n <= 600; n++) {
+            List<Fragmento> fragmentos = divisor.dividir("PRUEBA", "doc.md",
+                    "# Doc\n\n## Seccion\n\n" + "palabra ".repeat(n) + "\n");
+            for (Fragmento f : fragmentos) {
+                assertTrue(palabras(f) >= MIN && palabras(f) <= MAX,
+                        "Con " + n + " palabras salió un fragmento de " + palabras(f));
+            }
+            assertEquals(n, fragmentos.stream().mapToInt(DivisorFragmentosTests::palabras).sum(),
+                    "Con " + n + " palabras se perdió contenido");
+        }
     }
 }

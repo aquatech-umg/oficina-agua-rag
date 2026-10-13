@@ -7,9 +7,10 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 /**
- * Parte un documento Markdown en fragmentos según los criterios de AQ-112:
- * una sección ## por fragmento, uniendo las de menos de 40 palabras
- * y dividiendo las de más de 120 (por párrafos, luego por oraciones y, si hace falta, por palabras).
+ * Parte un documento Markdown en fragmentos de 40 a 120 palabras (criterio de AQ-112):
+ * una sección ## por fragmento, uniendo las de menos de 40 palabras y dividiendo las de más de 120
+ * por párrafos, luego por oraciones y, si hace falta, por palabras. Al final, cualquier fragmento
+ * que haya quedado con menos de 40 palabras se completa con su vecino.
  */
 @Component
 public class DivisorFragmentos {
@@ -94,7 +95,46 @@ public class DivisorFragmentos {
         for (String parrafo : texto.split("\\n\\s*\\n")) {
             piezas.addAll(partirParrafo(parrafo.strip()));
         }
-        return agrupar(piezas, "\n\n");
+        return completarCortos(agrupar(piezas, "\n\n"));
+    }
+
+    /**
+     * Junta cada fragmento de menos de MIN_PALABRAS con su vecino. Si juntos caben en MAX_PALABRAS
+     * quedan como uno solo; si no, se reparten a la mitad (como suman menos de MIN + MAX, cada mitad
+     * queda entre 61 y 80 palabras). Se repite hasta que no quede ninguno corto.
+     */
+    private List<String> completarCortos(List<String> grupos) {
+        List<String> resultado = new ArrayList<>(grupos);
+        boolean cambio = true;
+        while (cambio && resultado.size() > 1) {
+            cambio = false;
+            for (int i = 0; i < resultado.size(); i++) {
+                if (contarPalabras(resultado.get(i)) >= MIN_PALABRAS) {
+                    continue;
+                }
+                int vecino = i < resultado.size() - 1 ? i + 1 : i - 1;
+                int primero = Math.min(i, vecino);
+                String unido = resultado.get(primero) + "\n\n" + resultado.get(primero + 1);
+                resultado.remove(primero + 1);
+                resultado.remove(primero);
+                if (contarPalabras(unido) <= MAX_PALABRAS) {
+                    resultado.add(primero, unido);
+                } else {
+                    resultado.addAll(primero, partirEnDos(unido));
+                }
+                cambio = true;
+                break;
+            }
+        }
+        return resultado;
+    }
+
+    private List<String> partirEnDos(String texto) {
+        String[] palabras = texto.strip().split("\\s+");
+        int mitad = (palabras.length + 1) / 2;
+        return List.of(
+                String.join(" ", Arrays.copyOfRange(palabras, 0, mitad)),
+                String.join(" ", Arrays.copyOfRange(palabras, mitad, palabras.length)));
     }
 
     /** Un párrafo que sigue pasado se parte por oraciones; una oración que sigue pasada, por palabras. */
