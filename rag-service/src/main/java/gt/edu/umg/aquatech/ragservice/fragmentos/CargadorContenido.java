@@ -23,7 +23,7 @@ import gt.edu.umg.aquatech.ragservice.llm.ModeloNoDisponibleException;
 import gt.edu.umg.aquatech.ragservice.llm.ServicioLlm;
 
 /**
- * Al arrancar el servicio, carga los documentos de contenido/ en pgvector.
+ * Al arrancar el servicio, carga los documentos de contenido/ (excepto README.md) en pgvector.
  * Solo genera embeddings de los fragmentos nuevos o editados, y borra los que ya no existen.
  * Se desactiva con rag.carga.al-iniciar=false (variable RAG_CARGA_AL_INICIAR).
  */
@@ -32,7 +32,7 @@ import gt.edu.umg.aquatech.ragservice.llm.ServicioLlm;
 public class CargadorContenido implements ApplicationRunner {
 
     static final String ORIGEN = "CONTENIDO";
-    private static final String PATRON = "classpath:contenido/0*.md";
+    private static final String PATRON = "classpath:contenido/*.md";
     private static final int TAMANO_LOTE = 16;
 
     private static final Logger log = LoggerFactory.getLogger(CargadorContenido.class);
@@ -79,6 +79,13 @@ public class CargadorContenido implements ApplicationRunner {
                 fragmentos.size(), nuevos.size(), fragmentos.size() - nuevos.size(), borrados);
     }
 
+    /** El README de contenido/ documenta las reglas del equipo y no se vectoriza. */
+    public static boolean seVectoriza(String nombreArchivo) {
+        return nombreArchivo != null
+                && nombreArchivo.endsWith(".md")
+                && !nombreArchivo.equalsIgnoreCase("README.md");
+    }
+
     private List<Fragmento> leerFragmentos() {
         try {
             Resource[] documentos = new PathMatchingResourcePatternResolver().getResources(PATRON);
@@ -86,6 +93,9 @@ public class CargadorContenido implements ApplicationRunner {
 
             List<Fragmento> fragmentos = new ArrayList<>();
             for (Resource documento : documentos) {
+                if (!seVectoriza(documento.getFilename())) {
+                    continue;
+                }
                 String markdown = documento.getContentAsString(StandardCharsets.UTF_8);
                 fragmentos.addAll(divisor.dividir(ORIGEN, documento.getFilename(), markdown));
             }

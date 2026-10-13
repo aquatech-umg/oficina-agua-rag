@@ -1,6 +1,7 @@
 package gt.edu.umg.aquatech.ragservice;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -11,12 +12,19 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
+import gt.edu.umg.aquatech.ragservice.fragmentos.CargadorContenido;
 import gt.edu.umg.aquatech.ragservice.fragmentos.DivisorFragmentos;
 import gt.edu.umg.aquatech.ragservice.fragmentos.Fragmento;
 
 class DivisorFragmentosTests {
 
+    private static final int MAX = 120;
+
     private final DivisorFragmentos divisor = new DivisorFragmentos();
+
+    private static int palabras(Fragmento f) {
+        return f.contenido().strip().split("\\s+").length;
+    }
 
     @Test
     void contenidoRealProduceUnFragmentoPorSeccion() throws IOException {
@@ -27,9 +35,9 @@ class DivisorFragmentosTests {
                     .getContentAsString(StandardCharsets.UTF_8);
             List<Fragmento> fragmentos = divisor.dividir("CONTENIDO", archivo, markdown);
             for (Fragmento f : fragmentos) {
-                int palabras = f.contenido().strip().split("\\s+").length;
-                assertTrue(palabras >= 40 && palabras <= 150,
-                        f.archivo() + " / " + f.seccion() + " tiene " + palabras + " palabras");
+                int n = palabras(f);
+                assertTrue(n >= 40 && n <= MAX,
+                        f.archivo() + " / " + f.seccion() + " tiene " + n + " palabras");
             }
             total += fragmentos.size();
         }
@@ -51,6 +59,26 @@ class DivisorFragmentosTests {
         List<Fragmento> fragmentos = divisor.dividir("PRUEBA", "doc.md", markdown);
         assertEquals(2, fragmentos.size());
         assertEquals("Larga", fragmentos.get(1).seccion());
+        fragmentos.forEach(f -> assertTrue(palabras(f) <= MAX));
+    }
+
+    @Test
+    void parrafoUnicoDeMasDe120PalabrasSeDividePorOraciones() {
+        String parrafo = "Esta es una oracion de prueba numero uno. ".repeat(30); // 240 palabras, un solo párrafo
+        List<Fragmento> fragmentos = divisor.dividir("PRUEBA", "doc.md", "# Doc\n\n## Larga\n\n" + parrafo + "\n");
+
+        assertTrue(fragmentos.size() >= 2);
+        fragmentos.forEach(f -> assertTrue(palabras(f) <= MAX, "Un fragmento tiene " + palabras(f) + " palabras"));
+        fragmentos.forEach(f -> assertEquals("Larga", f.seccion()));
+        assertEquals(240, fragmentos.stream().mapToInt(DivisorFragmentosTests::palabras).sum(),
+                "No se debe perder ninguna palabra al dividir");
+    }
+
+    @Test
+    void oracionSinPuntosDeMasDe120PalabrasSeDividePorPalabras() {
+        List<Fragmento> fragmentos = divisor.dividir("PRUEBA", "doc.md",
+                "# Doc\n\n## Gigante\n\n" + "palabra ".repeat(300) + "\n");
+        assertEquals(List.of(120, 120, 60), fragmentos.stream().map(DivisorFragmentosTests::palabras).toList());
     }
 
     @Test
@@ -62,5 +90,13 @@ class DivisorFragmentosTests {
 
         Fragmento editado = divisor.dividir("PRUEBA", "doc.md", markdown.replace("texto", "otro")).getFirst();
         assertNotEquals(conLf.hash(), editado.hash());
+    }
+
+    @Test
+    void elReadmeDeContenidoNoSeVectoriza() {
+        assertTrue(CargadorContenido.seVectoriza("01-tarifas.md"));
+        assertTrue(CargadorContenido.seVectoriza("horarios.md"), "Cualquier .md nuevo se carga, sin importar el nombre");
+        assertFalse(CargadorContenido.seVectoriza("README.md"));
+        assertFalse(CargadorContenido.seVectoriza("notas.txt"));
     }
 }

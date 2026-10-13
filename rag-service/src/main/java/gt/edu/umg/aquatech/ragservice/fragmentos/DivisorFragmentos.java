@@ -1,20 +1,21 @@
 package gt.edu.umg.aquatech.ragservice.fragmentos;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
 
 /**
- * Parte un documento Markdown en fragmentos según las reglas de AQ-91:
+ * Parte un documento Markdown en fragmentos según los criterios de AQ-112:
  * una sección ## por fragmento, uniendo las de menos de 40 palabras
- * y dividiendo por párrafos las de más de 150.
+ * y dividiendo las de más de 120 (por párrafos, luego por oraciones y, si hace falta, por palabras).
  */
 @Component
 public class DivisorFragmentos {
 
     static final int MIN_PALABRAS = 40;
-    static final int MAX_PALABRAS = 150;
+    static final int MAX_PALABRAS = 120;
 
     public List<Fragmento> dividir(String origen, String archivo, String markdown) {
         List<Fragmento> fragmentos = new ArrayList<>();
@@ -84,26 +85,65 @@ public class DivisorFragmentos {
                 primera.texto() + "\n\n" + segunda.texto());
     }
 
-    /** Si la sección pasa de MAX_PALABRAS, la parte por párrafos sin cortar un párrafo a la mitad. */
+    /** Si la sección pasa de MAX_PALABRAS, la divide por párrafos y agrupa los que quepan juntos. */
     private List<String> dividirLarga(String texto) {
         if (contarPalabras(texto) <= MAX_PALABRAS) {
             return List.of(texto);
         }
-
-        List<String> partes = new ArrayList<>();
-        StringBuilder actual = new StringBuilder();
+        List<String> piezas = new ArrayList<>();
         for (String parrafo : texto.split("\\n\\s*\\n")) {
-            if (!actual.isEmpty()
-                    && contarPalabras(actual.toString()) + contarPalabras(parrafo) > MAX_PALABRAS) {
-                partes.add(actual.toString().strip());
-                actual.setLength(0);
-            }
-            actual.append(parrafo).append("\n\n");
+            piezas.addAll(partirParrafo(parrafo.strip()));
         }
-        if (!actual.toString().isBlank()) {
-            partes.add(actual.toString().strip());
+        return agrupar(piezas, "\n\n");
+    }
+
+    /** Un párrafo que sigue pasado se parte por oraciones; una oración que sigue pasada, por palabras. */
+    private List<String> partirParrafo(String parrafo) {
+        if (contarPalabras(parrafo) <= MAX_PALABRAS) {
+            return List.of(parrafo);
+        }
+        List<String> oraciones = new ArrayList<>();
+        for (String oracion : parrafo.split("(?<=[.!?])\\s+")) {
+            if (contarPalabras(oracion) <= MAX_PALABRAS) {
+                oraciones.add(oracion);
+            } else {
+                oraciones.addAll(partirPorPalabras(oracion));
+            }
+        }
+        return agrupar(oraciones, " ");
+    }
+
+    private List<String> partirPorPalabras(String texto) {
+        String[] palabras = texto.strip().split("\\s+");
+        List<String> partes = new ArrayList<>();
+        for (int i = 0; i < palabras.length; i += MAX_PALABRAS) {
+            partes.add(String.join(" ", Arrays.copyOfRange(palabras, i, Math.min(i + MAX_PALABRAS, palabras.length))));
         }
         return partes;
+    }
+
+    /** Junta piezas consecutivas mientras el total no pase de MAX_PALABRAS. */
+    private List<String> agrupar(List<String> piezas, String separador) {
+        List<String> grupos = new ArrayList<>();
+        StringBuilder actual = new StringBuilder();
+        int palabrasActual = 0;
+        for (String pieza : piezas) {
+            int palabras = contarPalabras(pieza);
+            if (palabrasActual > 0 && palabrasActual + palabras > MAX_PALABRAS) {
+                grupos.add(actual.toString());
+                actual.setLength(0);
+                palabrasActual = 0;
+            }
+            if (palabrasActual > 0) {
+                actual.append(separador);
+            }
+            actual.append(pieza);
+            palabrasActual += palabras;
+        }
+        if (palabrasActual > 0) {
+            grupos.add(actual.toString());
+        }
+        return grupos;
     }
 
     static int contarPalabras(String texto) {
