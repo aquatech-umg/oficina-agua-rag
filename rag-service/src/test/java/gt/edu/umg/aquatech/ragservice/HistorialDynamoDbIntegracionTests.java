@@ -2,7 +2,6 @@ package gt.edu.umg.aquatech.ragservice;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -11,12 +10,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
 import gt.edu.umg.aquatech.ragservice.api.model.Fuente;
+import gt.edu.umg.aquatech.ragservice.historial.DynamoDbConfig;
 import gt.edu.umg.aquatech.ragservice.historial.DynamoDbProperties;
 import gt.edu.umg.aquatech.ragservice.historial.HistorialDynamoDb;
 import gt.edu.umg.aquatech.ragservice.llm.LlmProperties;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest;
@@ -27,19 +24,14 @@ class HistorialDynamoDbIntegracionTests {
     @Test
     void guardaYConsultaConversacionCompletaEnOrden() throws InterruptedException {
 
-        try (DynamoDbClient cliente = DynamoDbClient.builder()
-                .endpointOverride(URI.create("http://localhost:8010"))
-                .region(Region.US_EAST_1)
-                .credentialsProvider(
-                        StaticCredentialsProvider.create(
-                                AwsBasicCredentials.create("local", "local")))
-                .build()) {
+        DynamoDbProperties properties =
+                new DynamoDbProperties(
+                        "http://localhost:8010",
+                        "chatbot-historial",
+                        "us-east-1");
 
-            DynamoDbProperties properties =
-                    new DynamoDbProperties(
-                            "http://localhost:8010",
-                            "chatbot-historial",
-                            "us-east-1");
+        try (DynamoDbClient cliente =
+                new DynamoDbConfig().dynamoDbClient(properties)) {
 
             LlmProperties llmProperties =
                     new LlmProperties(
@@ -101,7 +93,7 @@ class HistorialDynamoDbIntegracionTests {
 
                 cliente.deleteItem(
                         DeleteItemRequest.builder()
-                                .tableName("chatbot-historial")
+                                .tableName(properties.tableName())
                                 .key(Map.of(
                                         "conversacionId",
                                         AttributeValue.builder()

@@ -1,22 +1,21 @@
 spring:
   application:
     name: rag-service
-
   datasource:
     url: jdbc:postgresql://localhost:5433/rag
     username: rag
     password: rag_local
-
   sql:
     init:
+      # Ejecuta schema.sql al arrancar (crea la extension vector y la tabla fragmentos si no existen)
       mode: always
-
   cloud:
     openfeign:
       client:
         config:
           ollama:
             connect-timeout: 5000
+            # Menor que el timeout del BFF (60 s): así respondemos 503 antes de que el BFF se rinda
             read-timeout: 50000
 
 server:
@@ -30,14 +29,17 @@ llm:
 
 rag:
   carga:
+    # Carga los documentos de contenido/ en pgvector al iniciar. Ponelo en false si no tenés Ollama.
     al-iniciar: ${RAG_CARGA_AL_INICIAR:true}
-
   busqueda:
+    # Cuántos fragmentos se buscan, similitud mínima (0 a 1) y margen respecto al mejor fragmento
     max-fragmentos: ${RAG_MAX_FRAGMENTOS:4}
     similitud-minima: ${RAG_SIMILITUD_MINIMA:0.50}
     margen-relativo: ${RAG_MARGEN_RELATIVO:0.10}
 
 dynamodb:
-  endpoint: ${DYNAMODB_ENDPOINT:http://localhost:8010}
+  # En local se configura DYNAMODB_ENDPOINT=http://localhost:8010.
+  # Sin endpoint se usa AWS real con DefaultCredentialsProvider.
+  endpoint: ${DYNAMODB_ENDPOINT:}
   table-name: ${DYNAMODB_TABLE_NAME:chatbot-historial}
   region: ${AWS_REGION:us-east-1}
