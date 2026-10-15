@@ -9,8 +9,9 @@ const CONSULTA_SERVICE_URL =
   process.env.CONSULTA_SERVICE_URL ?? "http://localhost:8082";
 
 const FORMATO_CODIGO = /^[A-Za-z0-9-]{1,50}$/;
+const MAX_LARGO_TOKEN = 4096;
 const TIMEOUT_MS = 5000;
-const ESTADOS_REENVIADOS = [200, 400, 404, 429];
+const ESTADOS_REENVIADOS = [200, 400, 403, 404, 429, 503];
 
 function error(codigo: string, mensaje: string, status: number) {
   const cuerpo: ErrorResponse = { codigo, mensaje };
@@ -37,12 +38,26 @@ export async function GET(request: Request) {
     );
   }
 
+  // El BFF solo reenvia el token de hCaptcha: quien lo verifica de verdad
+  // es consulta-service (AQ-117), para que quede protegido aunque lo llamen directo.
+  const token = request.headers.get("x-captcha-token")?.trim() ?? "";
+  if (!token || token.length > MAX_LARGO_TOKEN) {
+    return error(
+      "CAPTCHA_INVALIDO",
+      "Debe resolver el captcha para consultar",
+      403,
+    );
+  }
+
   let respuesta: Response;
   try {
     respuesta = await fetch(
       `${CONSULTA_SERVICE_URL}/api/v1/contadores/${encodeURIComponent(codigo)}/estado-cuenta`,
       {
-        headers: { "X-Forwarded-For": ipDelCliente(request) },
+        headers: {
+          "X-Forwarded-For": ipDelCliente(request),
+          "X-Captcha-Token": token,
+        },
         cache: "no-store",
         signal: AbortSignal.timeout(TIMEOUT_MS),
       },
