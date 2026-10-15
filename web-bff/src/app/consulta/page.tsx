@@ -8,13 +8,16 @@ export const metadata: Metadata = {
 };
 
 export default function ConsultaPage() {
+  // La sitekey es publica; se lee en el servidor y se pasa al formulario.
+  const sitekey = process.env.HCAPTCHA_SITEKEY ?? "";
+
   return (
     <main className={styles.main}>
       <h1 className={styles.titulo}>Consulta de estado de cuenta</h1>
       <p className={styles.descripcion}>
         Escriba el código de su contador para ver sus recibos pendientes.
       </p>
-      <ConsultaForm />
+      <ConsultaForm sitekey={sitekey} />
     </main>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
+import { useRef, useState, type FormEvent } from "react";
 import styles from "./consulta.module.css";
 
 const FORMATO_CODIGO = /^CONT-\d{3,6}$/;
@@ -20,15 +21,28 @@ interface EstadoCuenta {
   recibosPendientes: ReciboPendiente[];
 }
 
+interface ConsultaFormProps {
+  sitekey: string;
+}
+
 function quetzales(valor: number): string {
   return `Q${valor.toFixed(2)}`;
 }
 
-export default function ConsultaForm() {
+export default function ConsultaForm({ sitekey }: ConsultaFormProps) {
+  const captchaRef = useRef<HCaptcha>(null);
   const [codigo, setCodigo] = useState("");
+  const [token, setToken] = useState<string | null>(null);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [resultado, setResultado] = useState<EstadoCuenta | null>(null);
+
+  // Cada token de hCaptcha sirve una sola vez: despues de cada consulta
+  // hay que pedir un captcha nuevo.
+  function reiniciarCaptcha() {
+    captchaRef.current?.resetCaptcha();
+    setToken(null);
+  }
 
   async function manejarEnvio(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault();
@@ -39,12 +53,17 @@ export default function ConsultaForm() {
       setError("Escriba un código válido, por ejemplo CONT-001.");
       return;
     }
+    if (!token) {
+      setError("Resuelva el captcha antes de consultar.");
+      return;
+    }
 
     setError(null);
     setCargando(true);
     try {
       const respuesta = await fetch(
         `/api/consulta?codigo=${encodeURIComponent(normalizado)}`,
+        { headers: { "X-Captcha-Token": token } },
       );
 
       if (respuesta.ok) {
@@ -54,6 +73,8 @@ export default function ConsultaForm() {
 
       if (respuesta.status === 404) {
         setError("No existe un contador con ese código.");
+      } else if (respuesta.status === 403) {
+        setError("No se pudo verificar el captcha. Resuélvalo de nuevo e intente otra vez.");
       } else if (respuesta.status === 429) {
         setError("Demasiadas consultas seguidas. Intente de nuevo en un momento.");
       } else {
@@ -63,7 +84,16 @@ export default function ConsultaForm() {
       setError("No se pudo consultar en este momento. Intente más tarde.");
     } finally {
       setCargando(false);
+      reiniciarCaptcha();
     }
+  }
+
+  if (!sitekey) {
+    return (
+      <p className={styles.error} role="alert">
+        La consulta no está disponible: falta configurar el captcha (HCAPTCHA_SITEKEY).
+      </p>
+    );
   }
 
   return (
@@ -80,6 +110,20 @@ export default function ConsultaForm() {
           onChange={(evento) => setCodigo(evento.target.value)}
           placeholder="CONT-001"
           autoComplete="off"
+        />
+        <HCaptcha
+          ref={captchaRef}
+          sitekey={sitekey}
+          languageOverride="es"
+          onVerify={(nuevoToken) => {
+            setToken(nuevoToken);
+            setError(null);
+          }}
+          onExpire={() => setToken(null)}
+          onError={() => {
+            setToken(null);
+            setError("No se pudo cargar el captcha. Recargue la página.");
+          }}
         />
         <button className={styles.boton} type="submit" disabled={cargando}>
           {cargando ? "Consultando..." : "Consultar"}
