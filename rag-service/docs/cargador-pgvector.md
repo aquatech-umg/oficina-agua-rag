@@ -44,3 +44,15 @@ Si Ollama no está disponible al arrancar, se registra un `WARN` y el servicio s
     docker exec rag-db psql -U rag -d rag -c "SELECT archivo, seccion, vector_dims(embedding) FROM fragmentos ORDER BY id;"
 
 Resultado esperado con el contenido actual: 18 filas de 1024 dimensiones.
+
+
+## Cómo se pasan los vectores (AQ-125)
+
+`RepositorioFragmentos` pasa los embeddings como `float[]`, sin convertirlos a texto:
+
+- El driver JDBC de PostgreSQL envía el `float[]` como `real[]`.
+- **INSERT:** pgvector define un cast de asignación `real[]` → `vector`, así que `VALUES (..., :embedding)` funciona sin `CAST`.
+- **Búsqueda:** el operador `<=>` no aplica casts de asignación; por eso se usa `embedding <=> CAST(:vector AS vector)`, también pasando el `float[]`.
+
+Sin el `CAST` en la búsqueda, PostgreSQL responde `operator does not exist: vector <=> real[]`.
+Referencia: https://es.stackoverflow.com/questions/636392
