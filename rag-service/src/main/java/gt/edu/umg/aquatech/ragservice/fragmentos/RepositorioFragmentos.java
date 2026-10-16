@@ -7,6 +7,14 @@ import java.util.Set;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Acceso a la tabla fragmentos (pgvector).
+ * <p>
+ * Los vectores se pasan como {@code float[]}: el driver JDBC los envía como {@code real[]}.
+ * En el INSERT, pgvector convierte {@code real[]} a {@code vector} automáticamente (cast de asignación).
+ * En la búsqueda, el operador {@code <=>} no aplica esa conversión, por eso se usa {@code CAST(:vector AS vector)}.
+ * Referencia: https://es.stackoverflow.com/questions/636392
+ */
 @Repository
 public class RepositorioFragmentos {
 
@@ -26,7 +34,7 @@ public class RepositorioFragmentos {
     public void guardar(Fragmento fragmento, float[] embedding) {
         jdbc.sql("""
                 INSERT INTO fragmentos (origen, archivo, seccion, contenido, hash, embedding)
-                VALUES (:origen, :archivo, :seccion, :contenido, :hash, CAST(:embedding AS vector))
+                VALUES (:origen, :archivo, :seccion, :contenido, :hash, :embedding)
                 ON CONFLICT (hash) DO NOTHING
                 """)
                 .param("origen", fragmento.origen())
@@ -34,7 +42,7 @@ public class RepositorioFragmentos {
                 .param("seccion", fragmento.seccion())
                 .param("contenido", fragmento.contenido())
                 .param("hash", fragmento.hash())
-                .param("embedding", aTextoVector(embedding))
+                .param("embedding", embedding)
                 .update();
     }
 
@@ -63,7 +71,7 @@ public class RepositorioFragmentos {
                 ORDER BY embedding <=> CAST(:vector AS vector)
                 LIMIT :limite
                 """)
-                .param("vector", aTextoVector(vector))
+                .param("vector", vector)
                 .param("limite", limite)
                 .query((rs, fila) -> new FragmentoEncontrado(
                         rs.getString("archivo"),
@@ -71,17 +79,5 @@ public class RepositorioFragmentos {
                         rs.getString("contenido"),
                         rs.getDouble("similitud")))
                 .list();
-    }
-
-    /** pgvector recibe los vectores como texto: [0.12,-0.03,...] */
-    static String aTextoVector(float[] vector) {
-        StringBuilder texto = new StringBuilder(vector.length * 10).append('[');
-        for (int i = 0; i < vector.length; i++) {
-            if (i > 0) {
-                texto.append(',');
-            }
-            texto.append(vector[i]);
-        }
-        return texto.append(']').toString();
     }
 }
