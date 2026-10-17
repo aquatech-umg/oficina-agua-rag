@@ -36,3 +36,10 @@ rag:
     max-fragmentos: ${RAG_MAX_FRAGMENTOS:4}
     similitud-minima: ${RAG_SIMILITUD_MINIMA:0.50}
     margen-relativo: ${RAG_MARGEN_RELATIVO:0.10}
+
+dynamodb:
+  # En local se configura DYNAMODB_ENDPOINT=http://localhost:8010.
+  # Sin endpoint se usa AWS real con DefaultCredentialsProvider.
+  endpoint: ${DYNAMODB_ENDPOINT:}
+  table-name: ${DYNAMODB_TABLE_NAME:chatbot-historial}
+  region: ${AWS_REGION:us-east-1}
