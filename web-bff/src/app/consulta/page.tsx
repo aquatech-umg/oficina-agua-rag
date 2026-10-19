@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import ConsultaForm from "./ConsultaForm";
 import styles from "./consulta.module.css";
 
@@ -12,12 +13,17 @@ export default function ConsultaPage() {
   const sitekey = process.env.HCAPTCHA_SITEKEY ?? "";
 
   return (
-    <main className={styles.main}>
-      <h1 className={styles.titulo}>Consulta de estado de cuenta</h1>
-      <p className={styles.descripcion}>
-        Escriba el código de su contador para ver sus recibos pendientes.
-      </p>
-      <ConsultaForm sitekey={sitekey} />
-    </main>
+    <>
+      <main className={styles.main}>
+        <h1 className={styles.titulo}>Consulta de estado de cuenta</h1>
+        <p className={styles.descripcion}>
+          Escriba el código de su contador para ver sus recibos pendientes.
+        </p>
+
+        <ConsultaForm sitekey={sitekey} />
+      </main>
+
+      <Script src="/chat-widget.js" strategy="afterInteractive" />
+    </>
   );
 }
