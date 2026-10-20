@@ -36,6 +36,17 @@ rag:
     max-fragmentos: ${RAG_MAX_FRAGMENTOS:4}
     similitud-minima: ${RAG_SIMILITUD_MINIMA:0.50}
     margen-relativo: ${RAG_MARGEN_RELATIVO:0.10}
+  replica:
+    # Vectoriza los datos públicos del monolito leyendo la réplica de solo lectura (AQ-126).
+    # Si la réplica no está levantada, solo se registra un WARN y el chat sigue con contenido/.
+    habilitada: ${RAG_REPLICA_HABILITADA:true}
+    url: ${RAG_REPLICA_URL:jdbc:mariadb://localhost:3307/oficina_agua?connectTimeout=3000}
+    usuario: ${RAG_REPLICA_USUARIO:lectura}
+    # La contraseña es DB_LECTURA_PASSWORD del .env de oficina-agua-infra (no se sube a Git)
+    password: ${RAG_REPLICA_PASSWORD:}
+    # Cada cuánto se vuelve a leer la réplica; solo se generan embeddings de lo que cambió
+    intervalo: ${RAG_REPLICA_INTERVALO:PT2M}
+    retraso-inicial: PT15S
 
 dynamodb:
   # En local se configura DYNAMODB_ENDPOINT=http://localhost:8010.

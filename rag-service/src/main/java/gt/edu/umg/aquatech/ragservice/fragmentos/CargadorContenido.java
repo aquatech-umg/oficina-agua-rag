@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +18,6 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
 import gt.edu.umg.aquatech.ragservice.llm.ModeloNoDisponibleException;
-import gt.edu.umg.aquatech.ragservice.llm.ServicioLlm;
 
 /**
  * Al arrancar el servicio, carga los documentos de contenido/ (excepto README.md) en pgvector.
@@ -33,18 +30,15 @@ public class CargadorContenido implements ApplicationRunner {
 
     static final String ORIGEN = "CONTENIDO";
     private static final String PATRON = "classpath:contenido/*.md";
-    private static final int TAMANO_LOTE = 16;
 
     private static final Logger log = LoggerFactory.getLogger(CargadorContenido.class);
 
     private final DivisorFragmentos divisor;
-    private final RepositorioFragmentos repositorio;
-    private final ServicioLlm llm;
+    private final SincronizadorFragmentos sincronizador;
 
-    public CargadorContenido(DivisorFragmentos divisor, RepositorioFragmentos repositorio, ServicioLlm llm) {
+    public CargadorContenido(DivisorFragmentos divisor, SincronizadorFragmentos sincronizador) {
         this.divisor = divisor;
-        this.repositorio = repositorio;
-        this.llm = llm;
+        this.sincronizador = sincronizador;
     }
 
     @Override
@@ -58,25 +52,9 @@ public class CargadorContenido implements ApplicationRunner {
     }
 
     public void cargar() {
-        List<Fragmento> fragmentos = leerFragmentos();
-        Set<String> existentes = repositorio.hashesPorOrigen(ORIGEN);
-        List<Fragmento> nuevos = fragmentos.stream()
-                .filter(f -> !existentes.contains(f.hash()))
-                .toList();
-
-        for (int inicio = 0; inicio < nuevos.size(); inicio += TAMANO_LOTE) {
-            List<Fragmento> lote = nuevos.subList(inicio, Math.min(inicio + TAMANO_LOTE, nuevos.size()));
-            List<float[]> vectores = llm.embeddings(lote.stream().map(Fragmento::textoParaEmbedding).toList());
-            for (int i = 0; i < lote.size(); i++) {
-                repositorio.guardar(lote.get(i), vectores.get(i));
-            }
-        }
-
-        Set<String> vigentes = fragmentos.stream().map(Fragmento::hash).collect(Collectors.toSet());
-        int borrados = repositorio.borrarObsoletos(ORIGEN, vigentes);
-
+        SincronizadorFragmentos.Resultado resultado = sincronizador.sincronizar(ORIGEN, leerFragmentos());
         log.info("Contenido cargado en pgvector: {} fragmentos ({} nuevos, {} sin cambios, {} borrados)",
-                fragmentos.size(), nuevos.size(), fragmentos.size() - nuevos.size(), borrados);
+                resultado.total(), resultado.nuevos(), resultado.sinCambios(), resultado.borrados());
     }
 
     /** El README de contenido/ documenta las reglas del equipo y no se vectoriza. */

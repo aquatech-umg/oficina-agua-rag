@@ -12,7 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 /** Prueba contra Ollama real. Se activa con la variable de entorno OLLAMA_IT=true. */
 @SpringBootTest(properties = {
         "spring.sql.init.mode=never",
-        "rag.carga.al-iniciar=false"
+        "rag.carga.al-iniciar=false",
+        "rag.replica.habilitada=false"
 })
 @EnabledIfEnvironmentVariable(named = "OLLAMA_IT", matches = "true")
 class ServicioLlmTests {
