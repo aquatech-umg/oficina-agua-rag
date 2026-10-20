@@ -26,17 +26,20 @@ Los precios de los ejemplos son ilustrativos.
 
 ## Datos dinámicos (no van en estos archivos)
 
-Posibles fuentes a cargar desde la réplica MySQL de solo lectura, sin tocar el monolito:
+Estos datos los carga automáticamente el rag-service desde la réplica MySQL de solo lectura (AQ-126),
+sin tocar el monolito, y se actualizan cada 2 minutos. Ver `rag-service/docs/replica-rag.md`.
 
 | Dato | Tabla |
 |---|---|
 | Montos de las tarifas vigentes | `tarifas` |
+| Servicios que presta la oficina | `servicios` |
 | Teléfono, WhatsApp, correo, dirección y horario | `configuraciones_landing` |
 | Preguntas frecuentes | `preguntas_frecuentes` |
 | Avisos públicos vigentes | `avisos_publicos` |
 | Métodos de pago activos | `metodos_pago` |
 
-Propuesta actual del equipo: no vectorizar clientes, contadores, lecturas, recibos ni pagos, evitando incorporar datos personales u operativos innecesarios al RAG. Pendiente de confirmación con el docente, igual que la lista de tablas.
+No se vectorizan clientes, contadores, lecturas, recibos ni pagos, para no incorporar datos personales
+u operativos al RAG.
 
 ## Estrategia de chunks
 

@@ -25,7 +25,7 @@ Arrancar dos veces no duplica nada ni vuelve a llamar a Ollama.
 
 | Columna | Uso |
 |---|---|
-| `origen` | `CONTENIDO` para los `.md`; otros orígenes (tablas de la réplica) llegarán después |
+| `origen` | `CONTENIDO` para los `.md`; `REPLICA` para los datos públicos del monolito (ver `replica-rag.md`) |
 | `archivo`, `seccion` | Se devuelven en `fuentes` de la respuesta del chat |
 | `contenido` | Texto que se pasa al modelo como contexto |
 | `hash` | SHA-256, `UNIQUE`, evita duplicados |
