@@ -1,76 +1,865 @@
-.main {
-  max-width: 32rem;
-  margin: 0 auto;
-  padding: 3rem 1.5rem;
-  font-family: var(--font-geist-sans), sans-serif;
+.pagina {
+  min-height: 100vh;
+
+  color: #22385f;
+
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(38, 129, 183, 0.07),
+      transparent 32%
+    ),
+    linear-gradient(
+      180deg,
+      #f9fcff 0%,
+      #f1f7fc 48%,
+      #ffffff 100%
+    );
 }
 
+/* =========================================
+   ENCABEZADO
+   ========================================= */
+
+.encabezado {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+
+  background: rgba(255, 255, 255, 0.97);
+  border-bottom: 1px solid #e3edf5;
+
+  backdrop-filter: blur(14px);
+}
+
+.encabezadoContenido {
+  width: min(1120px, calc(100% - 32px));
+  min-height: 104px;
+
+  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 32px;
+}
+
+.identidad {
+  display: flex;
+  align-items: baseline;
+
+  gap: 7px;
+
+  white-space: nowrap;
+}
+
+.identidadPrincipal,
+.identidadDestacada {
+  color: #5ba4b4;
+
+  font-size: 1.35rem;
+  font-weight: 850;
+
+  letter-spacing: -0.025em;
+}
+
+/* =========================================
+   LOGO
+   ========================================= */
+
+.logoAquatech {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  flex: 0 0 auto;
+
+  margin: 0;
+  padding: 0;
+
+  background: transparent;
+
+  border: 0;
+  border-radius: 0;
+
+  outline: 0;
+  box-shadow: none;
+}
+
+.logoAquatechImagen {
+  display: block;
+
+  width: 235px;
+  height: auto;
+
+  margin: 0;
+  padding: 0;
+
+  object-fit: contain;
+
+  background: transparent;
+
+  border: 0;
+  border-radius: 0;
+
+  outline: 0;
+  box-shadow: none;
+}
+
+/* =========================================
+   CONTENIDO PRINCIPAL
+   ========================================= */
+
+.main {
+  width: min(1120px, calc(100% - 32px));
+
+  margin: 0 auto;
+
+  padding: 52px 0 72px;
+}
+
+.presentacion {
+  width: 100%;
+  max-width: 800px;
+
+  margin: 0 auto 36px;
+
+  text-align: center;
+}
+
+/* =========================================
+   TÍTULO
+   ========================================= */
+
 .titulo {
-  font-size: 1.75rem;
-  margin-bottom: 0.5rem;
+  margin: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  color: #22385f;
+
+  font-size: clamp(2.5rem, 5vw, 4.25rem);
+  font-weight: 900;
+
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+}
+
+.tituloDestacado {
+  margin-top: 3px;
+
+  color: #22385f;
+
+  background: none;
+
+  -webkit-text-fill-color: #22385f;
 }
 
 .descripcion {
-  opacity: 0.75;
-  margin-bottom: 2rem;
+  width: min(680px, 100%);
+
+  margin: 16px auto 0;
+
+  color: #60758d;
+
+  font-size: 1.08rem;
+
+  line-height: 1.6;
 }
 
+/* =========================================
+   FORMULARIO
+   ========================================= */
+
 .formulario {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  width: min(880px, 100%);
+
+  margin: 0 auto;
+
+  padding: 38px;
+
+  background: rgba(255, 255, 255, 0.97);
+
+  border: 1px solid #e0eaf3;
+  border-radius: 26px;
+
+  box-shadow:
+    0 24px 60px rgba(23, 52, 91, 0.08),
+    0 4px 12px rgba(23, 52, 91, 0.03);
+}
+
+.formularioEncabezado h2 {
+  margin: 0 0 8px;
+
+  color: #22385f;
+
+  font-size: 1.8rem;
+  font-weight: 850;
+
+  letter-spacing: -0.025em;
+}
+
+.formularioEncabezado p {
+  margin: 0;
+
+  color: #64798f;
+
+  line-height: 1.6;
+}
+
+/* =========================================
+   CAMPO
+   ========================================= */
+
+.grupoCampo {
+  margin-top: 24px;
 }
 
 .etiqueta {
-  font-weight: 600;
+  display: inline-block;
+
+  margin-bottom: 9px;
+
+  color: #22385f;
+
+  font-weight: 750;
 }
 
 .campo {
-  padding: 0.75rem;
+  width: 100%;
+  height: 60px;
+
+  padding: 0 18px;
+
+  color: #22385f;
+  background: #fcfdff;
+
+  border: 1px solid #cdddea;
+  border-radius: 14px;
+
+  font: inherit;
   font-size: 1rem;
-  border: 1px solid #888;
-  border-radius: 6px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
 }
+
+.campo::placeholder {
+  color: #93a7ba;
+}
+
+.campo:hover {
+  border-color: #9fbdd2;
+}
+
+.campo:focus {
+  background: #ffffff;
+
+  border-color: #5ba4b4;
+
+  box-shadow: 0 0 0 4px rgba(91, 164, 180, 0.14);
+}
+
+.ayuda {
+  margin: 9px 0 0;
+
+  color: #657b90;
+
+  font-size: 0.9rem;
+}
+
+/* =========================================
+   CAPTCHA
+   ========================================= */
+
+.captcha {
+  width: 100%;
+
+  margin-top: 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  overflow-x: auto;
+}
+
+/* =========================================
+   BOTÓN
+   ========================================= */
 
 .boton {
-  padding: 0.75rem;
+  width: 50%;
+  min-width: 260px;
+  min-height: 56px;
+
+  margin: 26px auto 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  color: #ffffff;
+
+  background: linear-gradient(
+    135deg,
+    #284f87 0%,
+    #3477ac 62%,
+    #5ba4b4 120%
+  );
+
+  border: 0;
+  border-radius: 14px;
+
+  font: inherit;
   font-size: 1rem;
-  border: none;
-  border-radius: 6px;
-  background: #0b5ea8;
-  color: #fff;
+  font-weight: 800;
+
   cursor: pointer;
+
+  box-shadow: 0 12px 26px rgba(34, 56, 95, 0.18);
+
+  transition:
+    transform 0.2s ease,
+    filter 0.2s ease,
+    box-shadow 0.2s ease;
 }
+
+.boton:hover:not(:disabled) {
+  transform: translateY(-2px);
+
+  filter: brightness(1.04);
+
+  box-shadow: 0 16px 30px rgba(34, 56, 95, 0.23);
+}
+
+.boton:focus-visible {
+  outline: 3px solid rgba(91, 164, 180, 0.28);
+  outline-offset: 3px;
+}
+
+.boton:disabled {
+  opacity: 0.7;
+
+  cursor: wait;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #ffffff;
+
+  border-radius: 50%;
+
+  animation: girar 700ms linear infinite;
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================
+   ERROR
+   ========================================= */
 
 .error {
-  color: #d32f2f;
+  display: flex;
+  align-items: flex-start;
+
+  gap: 10px;
+
+  margin-top: 18px;
+  padding: 14px 16px;
+
+  color: #a83333;
+  background: #fff3f3;
+
+  border: 1px solid #f2cccc;
+  border-radius: 13px;
 }
 
-.aviso {
-  color: #2e7d32;
+.error > span {
+  width: 21px;
+  height: 21px;
+
+  flex: 0 0 auto;
+
+  display: grid;
+  place-items: center;
+
+  color: #ffffff;
+  background: #b43a3a;
+
+  border-radius: 50%;
+
+  font-size: 0.75rem;
+  font-weight: 900;
 }
+
+.error p {
+  margin: 0;
+}
+
+/* =========================================
+   RESULTADO
+   ========================================= */
+
 .resultado {
-  margin-top: 1.5rem;
+  width: min(880px, 100%);
+
+  margin: 28px auto 0;
+
+  overflow: hidden;
+
+  background: #ffffff;
+
+  border: 1px solid #e0eaf3;
+  border-radius: 24px;
+
+  box-shadow: 0 18px 45px rgba(34, 56, 95, 0.07);
 }
+
+.resultadoEncabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 26px;
+
+  background: linear-gradient(
+    135deg,
+    #f8fbfe 0%,
+    #edf6f8 100%
+  );
+
+  border-bottom: 1px solid #e0eaf3;
+}
+
+.etiquetaResumen {
+  display: inline-flex;
+
+  padding: 7px 11px;
+
+  color: #397f91;
+  background: #eaf5f6;
+
+  border-radius: 999px;
+
+  font-size: 0.75rem;
+  font-weight: 800;
+
+  text-transform: uppercase;
+}
+
+.resultadoEncabezado h2 {
+  margin-top: 8px;
+
+  color: #22385f;
+}
+
+/* =========================================
+   SALDO
+   ========================================= */
 
 .saldo {
-  font-size: 1.25rem;
-  font-weight: 600;
+  min-width: 190px;
+
+  padding: 14px 17px;
+
+  color: #ffffff;
+
+  background: linear-gradient(
+    135deg,
+    #22385f,
+    #3477ac
+  );
+
+  border-radius: 14px;
+
+  text-align: right;
 }
+
+.saldo span {
+  display: block;
+
+  font-size: 0.74rem;
+
+  opacity: 0.82;
+
+  text-transform: uppercase;
+}
+
+.saldo strong {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #ffffff;
+
+  font-size: 1.45rem;
+}
+
+/* =========================================
+   DATOS DEL SERVICIO
+   ========================================= */
+
+.datosServicio {
+  display: grid;
+
+  grid-template-columns: 1.4fr 0.8fr;
+
+  gap: 16px;
+
+  margin: 0;
+  padding: 24px;
+}
+
+.datosServicio div {
+  padding: 14px;
+
+  background: #f8fbfd;
+
+  border: 1px solid #e0eaf3;
+  border-radius: 12px;
+}
+
+.datosServicio dt {
+  color: #62788f;
+
+  font-size: 0.75rem;
+  font-weight: 800;
+
+  text-transform: uppercase;
+}
+
+.datosServicio dd {
+  margin: 6px 0 0;
+
+  color: #22385f;
+
+  font-weight: 650;
+}
+
+/* =========================================
+   ESTÁ AL DÍA
+   ========================================= */
+
+.alDia {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  margin: 0 24px 24px;
+  padding: 17px;
+
+  color: #277548;
+  background: #edf9f1;
+
+  border: 1px solid #cee9d7;
+  border-radius: 14px;
+}
+
+.alDiaIcono {
+  width: 38px;
+  height: 38px;
+
+  display: grid;
+  place-items: center;
+
+  flex: 0 0 auto;
+
+  color: #ffffff;
+  background: #277548;
+
+  border-radius: 50%;
+
+  font-weight: 900;
+}
+
+/* =========================================
+   RECIBOS
+   ========================================= */
+
+.recibos {
+  padding-bottom: 4px;
+}
+
+.recibosEncabezado {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  padding: 4px 24px 16px;
+}
+
+.recibosEncabezado h3 {
+  color: #22385f;
+}
+
+.recibosEncabezado p,
+.recibosEncabezado > span {
+  margin-top: 4px;
+
+  color: #64798f;
+
+  font-size: 0.78rem;
+}
+
+.tablaContenedor {
+  width: 100%;
+
+  overflow-x: auto;
+
+  border-top: 1px solid #e0eaf3;
+}
+
+/* =========================================
+   TABLA
+   ========================================= */
 
 .tabla {
   width: 100%;
-  margin-top: 0.75rem;
+  min-width: 760px;
+
+  background: #ffffff;
+
   border-collapse: collapse;
+
+  font-size: 0.88rem;
 }
 
 .tabla th,
 .tabla td {
-  padding: 0.5rem;
+  padding: 13px 15px;
+
+  border-bottom: 1px solid #e6eef5;
+
   text-align: left;
-  border-bottom: 1px solid #ccc;
+
+  white-space: nowrap;
 }
 
-.tabla .derecha {
-  text-align: right;
+.tabla th {
+  color: #526b82;
+  background: #f4f8fb;
+
+  font-size: 0.72rem;
+  font-weight: 800;
+
+  text-transform: uppercase;
+}
+
+.tabla tbody tr:nth-child(even) {
+  background: #fbfdff;
+}
+
+.tabla tbody tr:hover {
+  background: #eff7fc;
+}
+
+.derecha {
+  text-align: right !important;
+
+  font-variant-numeric: tabular-nums;
+}
+
+.total {
+  color: #3477ac;
+
+  font-weight: 850;
+}
+
+/* =========================================
+   FOOTER
+   ========================================= */
+
+.pie {
+  margin-top: 56px;
+
+  background: rgba(255, 255, 255, 0.82);
+
+  border-top: 1px solid #e0eaf3;
+}
+
+.pieContenido {
+  width: min(1120px, calc(100% - 32px));
+
+  margin: 0 auto;
+  padding: 28px 0;
+
+  display: grid;
+
+  grid-template-columns: 1.2fr 1fr 1fr;
+
+  gap: 24px;
+}
+
+.pieTitulo {
+  margin: 0;
+
+  color: #22385f;
+
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.pieTexto {
+  margin: 6px 0 0;
+
+  color: #657b90;
+}
+
+.pieDato span {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #5ba4b4;
+
+  font-size: 0.76rem;
+  font-weight: 800;
+
+  text-transform: uppercase;
+}
+
+.pieDato strong {
+  color: #536c83;
+
+  font-size: 0.92rem;
+}
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 700px) {
+  .encabezadoContenido {
+    min-height: 82px;
+
+    gap: 14px;
+  }
+
+  .identidad {
+    gap: 5px;
+  }
+
+  .identidadPrincipal,
+  .identidadDestacada {
+    font-size: 0.95rem;
+  }
+
+  .logoAquatechImagen {
+    width: 145px;
+  }
+
+  .main {
+    padding: 36px 0 56px;
+  }
+
+  .titulo {
+    font-size: 2.25rem;
+  }
+
+  .tituloDestacado {
+    margin-top: 2px;
+  }
+
+  .descripcion {
+    font-size: 1rem;
+  }
+
+  .formulario {
+    padding: 22px;
+
+    border-radius: 20px;
+  }
+
+  .formularioEncabezado h2 {
+    font-size: 1.45rem;
+  }
+
+  .boton {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .resultadoEncabezado {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+  .saldo {
+    min-width: 0;
+
+    text-align: left;
+  }
+
+  .datosServicio {
+    grid-template-columns: 1fr;
+  }
+
+  .recibosEncabezado {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .pieContenido {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 430px) {
+  .encabezadoContenido,
+  .main,
+  .pieContenido {
+    width: min(100% - 22px, 1120px);
+  }
+
+  .identidadPrincipal,
+  .identidadDestacada {
+    font-size: 0.82rem;
+  }
+
+  .logoAquatechImagen {
+    width: 125px;
+  }
+
+  .titulo {
+    font-size: 1.95rem;
+  }
+}
+
+/* =========================================
+   ACCESIBILIDAD
+   ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .campo,
+  .boton {
+    transition: none;
+  }
+
+  .spinner {
+    animation-duration: 1.4s;
+  }
 }
