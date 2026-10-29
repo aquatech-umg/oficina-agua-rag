@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default function ConsultaPage() {
+  // La sitekey es publica; se lee en el servidor y se pasa al formulario.
   const sitekey = process.env.HCAPTCHA_SITEKEY ?? "";
 
   return (

@@ -40,6 +40,8 @@ export default function ConsultaForm({ sitekey }: ConsultaFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [resultado, setResultado] = useState<EstadoCuenta | null>(null);
 
+  // Cada token de hCaptcha sirve una sola vez: despues de cada consulta
+  // hay que pedir un captcha nuevo.
   function reiniciarCaptcha() {
     captchaRef.current?.resetCaptcha();
     setToken(null);
@@ -113,6 +115,7 @@ export default function ConsultaForm({ sitekey }: ConsultaFormProps) {
     return (
       <div className={styles.error} role="alert">
         <span aria-hidden="true">!</span>
+
         <p>
           La consulta no está disponible porque falta configurar el captcha.
         </p>
@@ -131,7 +134,8 @@ export default function ConsultaForm({ sitekey }: ConsultaFormProps) {
           <h2>Ingrese sus Datos</h2>
 
           <p>
-            El código identifica su servicio y permite consultar únicamente la información pública de su estado de cuenta.
+            El código identifica su servicio y permite consultar únicamente la
+            información pública de su estado de cuenta.
           </p>
         </div>
 
@@ -180,6 +184,7 @@ export default function ConsultaForm({ sitekey }: ConsultaFormProps) {
             }}
             onError={() => {
               setToken(null);
+
               setError(
                 "No se pudo cargar el captcha. Recargue la página.",
               );
@@ -208,6 +213,7 @@ export default function ConsultaForm({ sitekey }: ConsultaFormProps) {
             role="alert"
           >
             <span aria-hidden="true">!</span>
+
             <p>{error}</p>
           </div>
         )}
@@ -239,12 +245,16 @@ export default function ConsultaForm({ sitekey }: ConsultaFormProps) {
           <dl className={styles.datosServicio}>
             <div>
               <dt>Dirección del servicio</dt>
+
               <dd>{resultado.direccionServicio}</dd>
             </div>
 
             <div>
               <dt>Sector</dt>
-              <dd>{resultado.sector ?? "No especificado"}</dd>
+
+              <dd>
+                {resultado.sector ?? "No especificado"}
+              </dd>
             </div>
           </dl>
 
@@ -262,6 +272,7 @@ export default function ConsultaForm({ sitekey }: ConsultaFormProps) {
 
               <div>
                 <strong>Está al día</strong>
+
                 <p>No tiene recibos pendientes.</p>
               </div>
             </div>
@@ -278,69 +289,146 @@ export default function ConsultaForm({ sitekey }: ConsultaFormProps) {
                       : "recibos por pagar"}
                   </p>
                 </div>
-
-                <span>
-                  Deslice horizontalmente en celular
-                </span>
               </div>
 
-              <div className={styles.tablaContenedor}>
-                <table className={styles.tabla}>
-                  <thead>
-                    <tr>
-                      <th scope="col">Recibo</th>
-                      <th scope="col">Periodo</th>
-                      <th scope="col">Emisión</th>
+              {/* Tabla para computadora y tablet */}
+              <div className={styles.tablaEscritorio}>
+                <div className={styles.tablaContenedor}>
+                  <table className={styles.tabla}>
+                    <thead>
+                      <tr>
+                        <th scope="col">Recibo</th>
 
-                      <th
-                        scope="col"
-                        className={styles.derecha}
+                        <th scope="col">Periodo</th>
+
+                        <th scope="col">Emisión</th>
+
+                        <th
+                          scope="col"
+                          className={styles.derecha}
+                        >
+                          Monto
+                        </th>
+
+                        <th
+                          scope="col"
+                          className={styles.derecha}
+                        >
+                          Mora
+                        </th>
+
+                        <th
+                          scope="col"
+                          className={styles.derecha}
+                        >
+                          Total a pagar
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {resultado.recibosPendientes.map(
+                        (recibo) => (
+                          <tr key={recibo.numeroRecibo}>
+                            <td>
+                              {recibo.numeroRecibo}
+                            </td>
+
+                            <td>
+                              {recibo.periodo}
+                            </td>
+
+                            <td>
+                              {recibo.fechaEmision}
+                            </td>
+
+                            <td className={styles.derecha}>
+                              {quetzales(recibo.monto)}
+                            </td>
+
+                            <td className={styles.derecha}>
+                              {quetzales(recibo.mora)}
+                            </td>
+
+                            <td
+                              className={`${styles.derecha} ${styles.total}`}
+                            >
+                              {quetzales(recibo.total)}
+                            </td>
+                          </tr>
+                        ),
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Tarjetas para celular */}
+              <div className={styles.tarjetasMovil}>
+                {resultado.recibosPendientes.map(
+                  (recibo) => (
+                    <article
+                      key={recibo.numeroRecibo}
+                      className={styles.tarjetaRecibo}
+                    >
+                      <div
+                        className={styles.tarjetaReciboEncabezado}
                       >
-                        Monto
-                      </th>
+                        <div>
+                          <span className={styles.tarjetaEtiqueta}>
+                            Recibo
+                          </span>
 
-                      <th
-                        scope="col"
-                        className={styles.derecha}
-                      >
-                        Mora
-                      </th>
+                          <strong>
+                            {recibo.numeroRecibo}
+                          </strong>
+                        </div>
 
-                      <th
-                        scope="col"
-                        className={styles.derecha}
-                      >
-                        Total a pagar
-                      </th>
-                    </tr>
-                  </thead>
+                        <div className={styles.tarjetaTotal}>
+                          <span>Total a pagar</span>
 
-                  <tbody>
-                    {resultado.recibosPendientes.map(
-                      (recibo) => (
-                        <tr key={recibo.numeroRecibo}>
-                          <td>{recibo.numeroRecibo}</td>
-                          <td>{recibo.periodo}</td>
-                          <td>{recibo.fechaEmision}</td>
-
-                          <td className={styles.derecha}>
-                            {quetzales(recibo.monto)}
-                          </td>
-
-                          <td className={styles.derecha}>
-                            {quetzales(recibo.mora)}
-                          </td>
-
-                          <td
-                            className={`${styles.derecha} ${styles.total}`}
-                          >
+                          <strong>
                             {quetzales(recibo.total)}
-                          </td>
-                        </tr>
-                      ),
-                    )}
-                  </tbody>
-                </table>
+                          </strong>
+                        </div>
+                      </div>
+
+                      <div className={styles.tarjetaDatos}>
+                        <div>
+                          <span>Periodo</span>
+
+                          <strong>
+                            {recibo.periodo}
+                          </strong>
+                        </div>
+
+                        <div>
+                          <span>Emisión</span>
+
+                          <strong>
+                            {recibo.fechaEmision}
+                          </strong>
+                        </div>
+
+                        <div>
+                          <span>Monto</span>
+
+                          <strong>
+                            {quetzales(recibo.monto)}
+                          </strong>
+                        </div>
+
+                        <div>
+                          <span>Mora</span>
+
+                          <strong>
+                            {quetzales(recibo.mora)}
+                          </strong>
+                        </div>
+                      </div>
+                    </article>
+                  ),
+                )}
               </div>
             </div>
           )}
