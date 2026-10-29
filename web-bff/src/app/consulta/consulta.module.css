@@ -614,13 +614,20 @@
   color: #22385f;
 }
 
-.recibosEncabezado p,
-.recibosEncabezado > span {
+.recibosEncabezado p {
   margin-top: 4px;
 
   color: #64798f;
 
   font-size: 0.78rem;
+}
+
+/* =========================================
+   TABLA DE ESCRITORIO
+   ========================================= */
+
+.tablaEscritorio {
+  display: block;
 }
 
 .tablaContenedor {
@@ -630,10 +637,6 @@
 
   border-top: 1px solid #e0eaf3;
 }
-
-/* =========================================
-   TABLA
-   ========================================= */
 
 .tabla {
   width: 100%;
@@ -685,6 +688,165 @@
   color: #3477ac;
 
   font-weight: 850;
+}
+
+/* =========================================
+   TARJETAS PARA CELULAR
+   ========================================= */
+
+.tarjetasMovil {
+  display: none;
+}
+
+.tarjetaRecibo {
+  overflow: hidden;
+
+  background: #ffffff;
+
+  border: 1px solid #e0eaf3;
+  border-radius: 16px;
+
+  box-shadow: 0 8px 24px rgba(34, 56, 95, 0.06);
+}
+
+.tarjetaReciboEncabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  padding: 16px;
+
+  background: linear-gradient(
+    135deg,
+    #f8fbfe 0%,
+    #f2f8fb 100%
+  );
+
+  border-bottom: 1px solid #e6eef5;
+}
+
+.tarjetaReciboEncabezado > div:first-child {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.tarjetaEtiqueta {
+  color: #62788f;
+
+  font-size: 0.72rem;
+  font-weight: 800;
+
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.tarjetaReciboEncabezado > div:first-child strong {
+  color: #22385f;
+
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.tarjetaTotal {
+  min-width: 135px;
+
+  padding: 10px 13px;
+
+  color: #ffffff;
+
+  background: linear-gradient(
+    135deg,
+    #22385f,
+    #3477ac
+  );
+
+  border-radius: 12px;
+
+  text-align: right;
+}
+
+.tarjetaTotal span {
+  display: block;
+
+  color: rgba(255, 255, 255, 0.82);
+
+  font-size: 0.67rem;
+  font-weight: 750;
+
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.tarjetaTotal strong {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #ffffff;
+
+  font-size: 1.14rem;
+  font-weight: 850;
+
+  font-variant-numeric: tabular-nums;
+}
+
+.tarjetaDatos {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  padding: 4px 16px 12px;
+}
+
+.tarjetaDatos div {
+  min-width: 0;
+
+  padding: 12px 0;
+
+  border-bottom: 1px solid #eef3f7;
+}
+
+.tarjetaDatos div:nth-child(odd) {
+  padding-right: 12px;
+}
+
+.tarjetaDatos div:nth-child(even) {
+  padding-left: 12px;
+}
+
+.tarjetaDatos div:nth-last-child(-n + 2) {
+  border-bottom: 0;
+}
+
+.tarjetaDatos span {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #71859a;
+
+  font-size: 0.7rem;
+  font-weight: 750;
+
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.tarjetaDatos strong {
+  display: block;
+
+  overflow-wrap: anywhere;
+
+  color: #22385f;
+
+  font-size: 0.9rem;
+  font-weight: 750;
+
+  font-variant-numeric: tabular-nums;
 }
 
 /* =========================================
@@ -821,6 +983,22 @@
     align-items: flex-start;
 
     flex-direction: column;
+
+    padding: 4px 22px 16px;
+  }
+
+  /* En celular se oculta la tabla */
+  .tablaEscritorio {
+    display: none;
+  }
+
+  /* En celular se muestran las tarjetas */
+  .tarjetasMovil {
+    display: grid;
+
+    gap: 14px;
+
+    padding: 0 22px 22px;
   }
 
   .pieContenido {
@@ -846,6 +1024,43 @@
 
   .titulo {
     font-size: 1.95rem;
+  }
+
+  .recibosEncabezado {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .tarjetasMovil {
+    gap: 12px;
+
+    padding: 0 16px 18px;
+  }
+
+  .tarjetaReciboEncabezado {
+    align-items: stretch;
+    flex-direction: column;
+
+    gap: 12px;
+  }
+
+  .tarjetaTotal {
+    width: 100%;
+    min-width: 0;
+
+    text-align: left;
+  }
+
+  .tarjetaDatos {
+    padding: 4px 14px 10px;
+  }
+
+  .tarjetaDatos div:nth-child(odd) {
+    padding-right: 9px;
+  }
+
+  .tarjetaDatos div:nth-child(even) {
+    padding-left: 9px;
   }
 }
 
