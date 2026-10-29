@@ -1,6 +1,10 @@
 spring:
   application:
     name: rag-service
+  config:
+    # Lee el .env local (no se sube a Git): primero el de este módulo y luego el de la raíz del repo.
+    # optional: si no existe, arranca igual. Las variables de la consola siguen teniendo prioridad.
+    import: optional:file:.env[.properties],optional:file:../.env[.properties]
   datasource:
     url: jdbc:postgresql://localhost:5433/rag
     username: rag
@@ -42,14 +46,15 @@ rag:
     habilitada: ${RAG_REPLICA_HABILITADA:true}
     url: ${RAG_REPLICA_URL:jdbc:mariadb://localhost:3307/oficina_agua?connectTimeout=3000}
     usuario: ${RAG_REPLICA_USUARIO:lectura}
-    # La contraseña es DB_LECTURA_PASSWORD del .env de oficina-agua-infra (no se sube a Git)
+    # La contraseña es DB_LECTURA_PASSWORD del .env de oficina-agua-infra (no se sube a Git).
+    # Se pone en el .env de este repo (AQ-146) o en la consola.
     password: ${RAG_REPLICA_PASSWORD:}
     # Cada cuánto se vuelve a leer la réplica; solo se generan embeddings de lo que cambió
     intervalo: ${RAG_REPLICA_INTERVALO:PT2M}
     retraso-inicial: PT15S
 
 dynamodb:
-  # En local se configura DYNAMODB_ENDPOINT=http://localhost:8010.
+  # En local se configura DYNAMODB_ENDPOINT=http://localhost:8010 (en el .env o en la consola).
   # Sin endpoint se usa AWS real con DefaultCredentialsProvider.
   endpoint: ${DYNAMODB_ENDPOINT:}
   table-name: ${DYNAMODB_TABLE_NAME:chatbot-historial}
