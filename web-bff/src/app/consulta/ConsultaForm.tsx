@@ -11,6 +11,8 @@ interface ReciboPendiente {
   periodo: string;
   fechaEmision: string;
   monto: number;
+  mora: number;
+  total: number;
 }
 
 interface EstadoCuenta {
@@ -155,6 +157,8 @@ export default function ConsultaForm({ sitekey }: ConsultaFormProps) {
                   <th>Periodo</th>
                   <th>Emisión</th>
                   <th className={styles.derecha}>Monto</th>
+                  <th className={styles.derecha}>Mora</th>
+                  <th className={styles.derecha}>Total a pagar</th>
                 </tr>
               </thead>
               <tbody>
@@ -164,6 +168,8 @@ export default function ConsultaForm({ sitekey }: ConsultaFormProps) {
                     <td>{recibo.periodo}</td>
                     <td>{recibo.fechaEmision}</td>
                     <td className={styles.derecha}>{quetzales(recibo.monto)}</td>
+                    <td className={styles.derecha}>{quetzales(recibo.mora)}</td>
+                    <td className={styles.derecha}>{quetzales(recibo.total)}</td>
                   </tr>
                 ))}
               </tbody>
