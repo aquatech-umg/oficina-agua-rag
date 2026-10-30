@@ -1,5 +1,7 @@
 Nombre: Marvin Alexander Cámbara Alonzo  
 Carnet: 0905-23-17848  
+Nombre: Manuel Alexander Monzón Palma  
+Carnet: 0905-23-4539  
 Repositorio: https://github.com/aquatech-umg/oficina-agua-rag  
 Modulo asignado: Chatbot con RAG
 
